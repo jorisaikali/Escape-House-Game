@@ -33,22 +33,26 @@ public class PlayerMovement : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position += transform.forward * Time.deltaTime * speed;
+            movement = Camera.main.transform.GetChild(0).transform.forward;
+            transform.position += movement.normalized * Time.deltaTime * speed;
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            transform.position -= transform.forward * Time.deltaTime * speed;
+            movement = Camera.main.transform.GetChild(0).transform.forward;
+            transform.position -= movement.normalized * Time.deltaTime * speed;
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.position -= transform.right * Time.deltaTime * speed;
+            movement = Camera.main.transform.GetChild(0).transform.right;
+            transform.position -= movement.normalized * Time.deltaTime * speed;
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            transform.position += transform.right * Time.deltaTime * speed;
+            movement = Camera.main.transform.GetChild(0).transform.right;
+            transform.position += movement.normalized * Time.deltaTime * speed;
         }
 
         
