@@ -4,30 +4,42 @@ using UnityEngine;
 
 public class FirstPersonController : MonoBehaviour {
 
+    // ---------- Public variables ---------- //
     public float moveSpeed = 5f;
     public float mouseSensitivity = 5f;
     public float verticalRange = 60f;
+    // -------------------------------------- //
 
+    // ---------- Private variables ---------- //
     private float verticalRotation = 0f;
     private GameObject gameObjectHit = null;
     private float camRayLength = 100f;
     private InputManager inputManager;
+    private bool lockMovement = false, lockRotation = false;
+    // --------------------------------------- //
 
     private void Start ()
     {
+        // --------- Configuring the cursor --------- //
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        // ------------------------------------------ //
 
+        // --------- Getting references to other scripts --------- //
         inputManager = GetComponent<InputManager>();
+        // ------------------------------------------------------- //
     }
 
 	private void Update ()
     {
-        Move();
-        Look();
+        if (!lockMovement) // Check if movement is locked, if not locked, allow movement
+            Move();
+
+        if (!lockRotation) // Check if rotatio is locked, if not locked, allow rotating
+            Look();
 	}
 
-    // Moves the player if an input is pressed
+    // ------------------------ Moving the player ------------------------ //
     private void Move()
     {
         float forwardSpeed = inputManager.getPlayerAxis("Vertical") * moveSpeed;
@@ -39,8 +51,9 @@ public class FirstPersonController : MonoBehaviour {
         CharacterController cc = GetComponent<CharacterController>();
         cc.SimpleMove(speed);
     } 
+    // ------------------------------------------------------------------- //
 
-    // Controls the players view
+    // ------------------------ Controls the players rotation ------------------------ //
     private void Look()
     {
         float rotLeftRight = inputManager.getPlayerAxis("Mouse X") * mouseSensitivity;
@@ -50,9 +63,11 @@ public class FirstPersonController : MonoBehaviour {
         verticalRotation = Mathf.Clamp(verticalRotation, -verticalRange, verticalRange);
         Camera.main.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
     }
+    // -------------------------------------------------------------------------------- //
 
-    // Checks what the player is looking at on the mask layer. Returns the game object being looked at,
-    // null if looking at nothing on that mask
+    // -------------------------- Getting what the player is looking at -------------------------- //
+    /* Checks what the player is looking at on the mask layer. Returns the game object being looked at,
+       null if looking at nothing on that mask */
     public GameObject GetRayCast(LayerMask mask)
     {
         Vector3 rayOrigin = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f, 0));
@@ -69,4 +84,12 @@ public class FirstPersonController : MonoBehaviour {
 
         return gameObjectHit;
     }
+    // -------------------------------------------------------------------------------------------- //
+
+    // ---------- Locking/Unlocking player movement/rotate ---------- //
+    public void LockMovement() { lockMovement = true; }
+    public void LockRotation() { lockRotation = true; }
+    public void UnlockMovement() { lockMovement = false; }
+    public void UnlockRotation() { lockRotation = false; }
+    // -------------------------------------------------------------- //
 }
